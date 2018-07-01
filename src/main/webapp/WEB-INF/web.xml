@@ -9,11 +9,30 @@
     <servlet>
         <servlet-name>userServlet</servlet-name>
         <servlet-class>ru.javawebinar.topjava.web.UserServlet</servlet-class>
-        <load-on-startup>0</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>userServlet</servlet-name>
         <url-pattern>/users</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>mealServlet</servlet-name>
+        <servlet-class>ru.javawebinar.topjava.web.MealServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mealServlet</servlet-name>
+        <url-pattern>/meals</url-pattern>
+    </servlet-mapping>
+
+    <!--https://logback.qos.ch/manual/configuration.html-->
+    <servlet>
+        <servlet-name>ViewStatusMessages</servlet-name>
+        <servlet-class>ch.qos.logback.classic.ViewStatusMessagesServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ViewStatusMessages</servlet-name>
+        <url-pattern>/logs</url-pattern>
     </servlet-mapping>
 
 </web-app>
