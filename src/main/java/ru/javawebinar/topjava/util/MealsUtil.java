@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.summingInt;
 import static ru.javawebinar.topjava.util.TimeUtil.isBetween;
 
-public class UserMealsUtil {
+public class MealsUtil {
     public static void main(String[] args) {
         List<Meal> mealList = Arrays.asList(
                 new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
@@ -33,12 +33,12 @@ public class UserMealsUtil {
 
     public static List<MealWithExceed> getFilteredWithExceeded(List<Meal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         Map<LocalDate, Integer> caloriesOnDate = mealList.stream()
-                .collect(groupingBy(m -> m.getDateTime().toLocalDate(),
+                .collect(groupingBy(Meal::getDate,
                         summingInt(Meal::getCalories)));
 
         List<MealWithExceed> result = mealList.stream()
-                .filter(meal -> isBetween(meal.getDateTime().toLocalTime(), startTime, endTime))
-                .map(meal -> new MealWithExceed(meal, caloriesOnDate.get(meal.getDateTime().toLocalDate()) > caloriesPerDay))
+                .filter(meal -> isBetween(meal.getTime(), startTime, endTime))
+                .map(meal -> new MealWithExceed(meal, caloriesOnDate.get(meal.getDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
 
         return result;
