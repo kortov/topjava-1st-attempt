@@ -7,14 +7,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static ru.javawebinar.topjava.util.DateTimeUtil.isBetween;
 
 public class MealsUtil {
     public static final List<Meal> MEALS = Arrays.asList(
@@ -33,7 +36,7 @@ public class MealsUtil {
     }
 
     public static List<MealWithExceed> getFilteredWithExceeded(Collection<Meal> meals, int caloriesPerDay, LocalTime startTime, LocalTime endTime) {
-        return getFilteredWithExceeded(meals, caloriesPerDay, meal -> DateTimeUtil.isBetween(meal.getTime(), startTime, endTime));
+        return getFilteredWithExceeded(meals, caloriesPerDay, meal -> isBetween(meal.getTime(), startTime, endTime));
     }
 
     private static List<MealWithExceed> getFilteredWithExceeded(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
@@ -47,6 +50,22 @@ public class MealsUtil {
                 .filter(filter)
                 .map(meal -> createWithExceed(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
                 .collect(toList());
+    }
+
+    public static List<MealWithExceed> getFilteredWithExceededByCycles(List<Meal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+        Map<LocalDate, Integer> caloriesOnDate = new HashMap<>();
+        for (Meal meal : mealList) {
+            caloriesOnDate.merge(meal.getDate(), meal.getCalories(), Integer::sum);
+        }
+
+        List<MealWithExceed> resultList = new ArrayList<>();
+        for (Meal meal : mealList) {
+            if (isBetween(meal.getTime(), startTime, endTime)) {
+                resultList.add(createWithExceed(meal, caloriesOnDate.get(meal.getDate()) > caloriesPerDay));
+            }
+        }
+
+        return resultList;
     }
 
     public static MealWithExceed createWithExceed(Meal meal, boolean exceeded) {
