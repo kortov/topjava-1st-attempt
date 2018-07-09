@@ -21,15 +21,21 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     private AtomicInteger counter = new AtomicInteger(0);
 
     @Override
-    public boolean delete(int id) {
-        log.info("delete {}", id);
-        return repository.remove(id) == null;
+    public User save(User user) {
+        log.info("save {}", user);
+        if (user.isNew()) {
+            user.setId(counter.incrementAndGet());
+            repository.put(user.getId(), user);
+            return user;
+        }
+        // treat case: update, but absent in storage
+        return repository.computeIfPresent(user.getId(), (id, oldUser) -> user);
     }
 
     @Override
-    public User save(User user) {
-        log.info("save {}", user);
-        return user;
+    public boolean delete(int id) {
+        log.info("delete {}", id);
+        return repository.remove(id) != null;
     }
 
     @Override
