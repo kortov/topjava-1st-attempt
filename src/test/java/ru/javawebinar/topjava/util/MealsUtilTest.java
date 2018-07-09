@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class UserMealsUtilTest {
+class MealsUtilTest {
 
     @Test
     void getFilteredWithExceeded() {
@@ -26,12 +26,12 @@ class UserMealsUtilTest {
         );
 
         List<MealWithExceed> expected = Arrays.asList(
-                new MealWithExceed(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500, false),
-                new MealWithExceed(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000, true)
+                new MealWithExceed(tested.get(0), false),
+                new MealWithExceed(tested.get(3), true)
         );
 
 
-        assertEquals(expected, UserMealsUtil.getFilteredWithExceeded(tested, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
+        assertEquals(expected, MealsUtil.getFilteredWithExceeded(tested, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
     }
 
     @Test
@@ -46,12 +46,12 @@ class UserMealsUtilTest {
         );
 
         List<MealWithExceed> expected = Arrays.asList(
-                new MealWithExceed(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500, false),
-                new MealWithExceed(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000, true)
+                new MealWithExceed(tested.get(0), false),
+                new MealWithExceed(tested.get(3), true)
         );
 
 
-        assertEquals(expected, UserMealsUtil.getFilteredWithExceededByCycles(tested, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
+        assertEquals(expected, MealsUtil.getFilteredWithExceededByCycles(tested, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
     }
 
 }

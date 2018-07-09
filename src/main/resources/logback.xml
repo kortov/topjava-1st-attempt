@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
 
+    <define name="LOGDIR" class="ru.javawebinar.topjava.LogbackEnvironmentPropertiesGrabber">
+
+    </define>
+
     <!-- To enable JMX Management -->
     <jmxConfigurator/>
 
     <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>${TOPJAVA_ROOT}/log/topjava.log</file>
+        <file>${LOGDIR}/log/topjava.log</file>
 
         <encoder>
             <charset>UTF-8</charset>
