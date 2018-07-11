@@ -6,13 +6,13 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.util.List;
 
 public interface MealService {
-    Meal create(Meal meal);
+    Meal create(Meal meal, Integer userId);
 
-    void delete(int id) throws NotFoundException;
+    void delete(int id, Integer userId) throws NotFoundException;
 
-    Meal get(int id) throws NotFoundException;
+    Meal get(int id, Integer userId) throws NotFoundException;
 
-    void update(Meal meal);
+    void update(Meal meal, Integer userId);
 
-    List<Meal> getAll();
+    List<Meal> getAll(Integer userId);
 }
