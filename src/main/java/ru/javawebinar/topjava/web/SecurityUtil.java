@@ -19,7 +19,7 @@ public class SecurityUtil {
         }
     }
 
-    static User currentUser = User.USER;
+    private static User currentUser = User.USER;
 
     public static void setCurrentUser(User currentUser) {
         SecurityUtil.currentUser = currentUser;

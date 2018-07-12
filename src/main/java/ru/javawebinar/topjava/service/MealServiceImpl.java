@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.to.MealWithExceed;
+import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.List;
@@ -43,5 +45,10 @@ public class MealServiceImpl implements MealService {
     @Override
     public List<Meal> getAll(Integer userId) {
         return repository.getAll(userId);
+    }
+
+    @Override
+    public List<MealWithExceed> getAll(Integer userId, int caloriesPerDay) {
+        return MealsUtil.getWithExceeded(repository.getAll(userId), caloriesPerDay);
     }
 }
