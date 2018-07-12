@@ -2,7 +2,7 @@ package ru.javawebinar.topjava.util;
 
 import org.junit.jupiter.api.Test;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.MealWithExceed;
+import ru.javawebinar.topjava.to.MealWithExceed;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -26,12 +26,12 @@ class MealsUtilTest {
         );
 
         List<MealWithExceed> expected = Arrays.asList(
-                new MealWithExceed(tested.get(0), false),
-                new MealWithExceed(tested.get(3), true)
+                MealsUtil.createWithExceed(tested.get(0), false),
+                MealsUtil.createWithExceed(tested.get(3), true)
         );
 
 
-        assertEquals(expected, MealsUtil.getFilteredWithExceeded(tested, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
+        assertEquals(expected, MealsUtil.getFilteredWithExceeded(tested, 2000, LocalTime.of(7, 0), LocalTime.of(12, 0)));
     }
 
     @Test
@@ -46,8 +46,8 @@ class MealsUtilTest {
         );
 
         List<MealWithExceed> expected = Arrays.asList(
-                new MealWithExceed(tested.get(0), false),
-                new MealWithExceed(tested.get(3), true)
+                MealsUtil.createWithExceed(tested.get(0), false),
+                MealsUtil.createWithExceed(tested.get(3), true)
         );
 
 
