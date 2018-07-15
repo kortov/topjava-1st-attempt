@@ -7,17 +7,21 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealWithExceed;
+import ru.javawebinar.topjava.util.DateTimeUtil;
+import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
-import static ru.javawebinar.topjava.web.SecurityUtil.authUserCaloriesPerDay;
-import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 @Controller
 public class MealRestController {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(MealRestController.class);
+
     private final MealService service;
 
     @Autowired
@@ -25,31 +29,55 @@ public class MealRestController {
         this.service = service;
     }
 
-    public List<MealWithExceed> getAllWithExceed() {
-        log.info("getAll");
-        return service.getAll(authUserId(), authUserCaloriesPerDay());
-    }
-
     public Meal get(int id) {
-        log.info("get {}", id);
-        return service.get(id, authUserId());
-    }
-
-    public Meal create(Meal meal) {
-        log.info("create {}", meal);
-        checkNew(meal);
-        return service.create(meal, authUserId());
+        int userId = SecurityUtil.authUserId();
+        log.info("get meal {} for user {}", id, userId);
+        return service.get(id, userId);
     }
 
     public void delete(int id) {
-        log.info("delete {}", id);
-        service.delete(id, authUserId());
+        int userId = SecurityUtil.authUserId();
+        log.info("delete meal {} for user {}", id, userId);
+        service.delete(id, userId);
+    }
+
+    public List<MealWithExceed> getAll() {
+        int userId = SecurityUtil.authUserId();
+        log.info("getAll for user {}", userId);
+        return MealsUtil.getWithExceeded(service.getAll(userId), SecurityUtil.authUserCaloriesPerDay());
+    }
+
+    public Meal create(Meal meal) {
+        int userId = SecurityUtil.authUserId();
+        checkNew(meal);
+        log.info("create {} for user {}", meal, userId);
+        return service.create(meal, userId);
     }
 
     public void update(Meal meal, int id) {
-        log.info("update {} with id={}", meal, id);
+        int userId = SecurityUtil.authUserId();
         assureIdConsistent(meal, id);
-        service.update(meal, authUserId());
+        log.info("update {} for user {}", meal, userId);
+        service.update(meal, userId);
     }
 
+    /**
+     * <ol>Filter separately
+     * <li>by date</li>
+     * <li>by time for every date</li>
+     * </ol>
+     */
+    public List<MealWithExceed> getBetween(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+        int userId = SecurityUtil.authUserId();
+        log.info("getBetween dates({} - {}) time({} - {}) for user {}", startDate, endDate, startTime, endTime, userId);
+
+        List<Meal> mealsDateFiltered = service.getBetweenDates(
+                startDate != null ? startDate : DateTimeUtil.MIN_DATE,
+                endDate != null ? endDate : DateTimeUtil.MAX_DATE, userId);
+
+        return MealsUtil.getFilteredWithExceeded(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(),
+                startTime != null ? startTime : LocalTime.MIN,
+                endTime != null ? endTime : LocalTime.MAX
+        );
+    }
 }
