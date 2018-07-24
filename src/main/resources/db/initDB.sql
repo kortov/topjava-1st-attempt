@@ -19,18 +19,6 @@ CREATE TABLE users
 CREATE UNIQUE INDEX users_unique_email_idx
   ON users (email);
 
-CREATE TABLE meals
-(
-  id          INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
-  description VARCHAR                 NOT NULL,
-  dateTime    TIMESTAMP DEFAULT now() NOT NULL,
-  calories    INTEGER DEFAULT 0       NOT NULL,
-  user_id     INTEGER                 NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-);
-CREATE UNIQUE INDEX meals_unique_user_datetime_idx
-  ON meals (user_id, dateTime);
-
 CREATE TABLE user_roles
 (
   user_id INTEGER NOT NULL,
