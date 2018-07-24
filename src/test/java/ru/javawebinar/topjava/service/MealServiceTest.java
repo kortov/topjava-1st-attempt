@@ -12,7 +12,12 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.MealTestData.ADMIN_MEAL1;
 import static ru.javawebinar.topjava.MealTestData.ADMIN_MEAL_ID;
@@ -52,8 +57,18 @@ public class MealServiceTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void deleteNotFound() throws Exception {
+    public void deleteFromNonExistingUserNotFound() throws Exception {
         service.delete(MEAL1_ID, 1);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void deleteNotExistingMealNotFound() {
+        service.delete(0, USER_ID);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void deleteOthersMealNotFound() {
+        service.delete(MEAL1_ID, ADMIN_ID);
     }
 
     @Test
@@ -70,8 +85,13 @@ public class MealServiceTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void getNotFound() throws Exception {
+    public void getOthersMealNotFound() throws Exception {
         service.get(MEAL1_ID, ADMIN_ID);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void getNotExistingMealNotFound() throws Exception {
+        service.get(0, USER_ID);
     }
 
     @Test
@@ -82,8 +102,13 @@ public class MealServiceTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void updateNotFound() throws Exception {
+    public void updateOthersMealNotFound() throws Exception {
         service.update(MEAL1, ADMIN_ID);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void updateNotExistingMealNotFound() {
+        service.update(new Meal(0, LocalDateTime.now(), "", 0), ADMIN_ID);
     }
 
     @Test
@@ -96,5 +121,34 @@ public class MealServiceTest {
         assertMatch(service.getBetweenDates(
                 LocalDate.of(2015, Month.MAY, 30),
                 LocalDate.of(2015, Month.MAY, 30), USER_ID), MEAL3, MEAL2, MEAL1);
+    }
+
+    @Test
+    public void getBetweenDateTimesAllMeals() {
+        List<Meal> meals = service.getBetweenDateTimes(LocalDateTime.of(2015, Month.MAY, 30, 0, 0),
+                LocalDateTime.of(2015, Month.MAY, 31, 23, 59), USER_ID);
+        assertMatch(meals, MEALS.stream().sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                .collect(Collectors.toList()));
+    }
+
+    @Test
+    public void getBetweenDateTimesMostRecentMeal() {
+        List<Meal> meals = service.getBetweenDateTimes(LocalDateTime.of(2015, Month.MAY, 31, 20, 0),
+                LocalDateTime.of(2015, Month.MAY, 31, 20, 0), USER_ID);
+        assertMatch(meals, MEAL6);
+    }
+
+    @Test
+    public void getBetweenDateTimesEarlierThanAllMeals() {
+        List<Meal> meals = service.getBetweenDateTimes(LocalDateTime.of(2015, Month.MAY, 31, 0, 0),
+                LocalDateTime.of(2015, Month.MAY, 31, 20, 0), ADMIN_ID);
+        assertMatch(meals, Collections.emptyList());
+    }
+
+    @Test
+    public void getBetweenDateTimesLaterThanAllMeals() {
+        List<Meal> meals = service.getBetweenDateTimes(LocalDateTime.of(2015, Month.JUNE, 2, 21, 0),
+                LocalDateTime.of(2015, Month.JUNE, 3, 21, 0), ADMIN_ID);
+        assertMatch(meals, Collections.emptyList());
     }
 }
