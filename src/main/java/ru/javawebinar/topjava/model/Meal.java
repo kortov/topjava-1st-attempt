@@ -18,22 +18,21 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@SuppressWarnings("JpaQlInspection")
 @NamedQueries({
-        @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal WHERE id=:id AND user.id=:userId"),
-        @NamedQuery(name = Meal.BY_ID, query = "SELECT m FROM Meal m LEFT JOIN FETCH m.user WHERE m.id = ?1 AND m.user.id=?2"),
-        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m LEFT JOIN FETCH m.user u WHERE u.id=:userId ORDER BY m.dateTime DESC"),
-        @NamedQuery(name = Meal.ALL_BETWEEN, query = "SELECT m FROM Meal m " +
+        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
+        @NamedQuery(name = Meal.GET_BETWEEN, query = "SELECT m FROM Meal m " +
                 "WHERE m.user.id=:userId AND m.dateTime BETWEEN :startDate AND :endDate ORDER BY m.dateTime DESC"),
+//        @NamedQuery(name = Meal.UPDATE, query = "UPDATE Meal m SET m.dateTime = :datetime, m.calories= :calories," +
+//                "m.description=:desc where m.id=:id and m.user.id=:userId")
 })
 @Entity
 @Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
 public class Meal extends AbstractBaseEntity {
-
+    public static final String ALL_SORTED = "Meal.getAll";
     public static final String DELETE = "Meal.delete";
-    public static final String BY_ID = "Meal.getByUser";
-    public static final String ALL_SORTED = "Meal.getAllSorted";
-    public static final String ALL_BETWEEN = "Meal.getAllBetween";
-
+    public static final String GET_BETWEEN = "Meal.getBetween";
 
     @Column(name = "date_time", nullable = false)
     @NotNull
@@ -41,16 +40,16 @@ public class Meal extends AbstractBaseEntity {
 
     @Column(name = "description", nullable = false)
     @NotBlank
-    @Size(min = 2, max = 256)
+    @Size(min = 2, max = 120)
     private String description;
 
-    @Column(name = "calories", columnDefinition = "int default 0")
-    @NotNull
-    @Range(min = 0, max = 10000)
+    @Column(name = "calories", nullable = false)
+    @Range(min = 10, max = 5000)
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
+    @NotNull
     private User user;
 
     public Meal() {
