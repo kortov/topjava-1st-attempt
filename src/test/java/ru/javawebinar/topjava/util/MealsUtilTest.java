@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MealsUtilTest {
     @Test
-    void getFilteredWithExceeded() {
+    public void getFilteredWithExceeded() {
         List<Meal> tested = Arrays.asList(
                 new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
                 new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
