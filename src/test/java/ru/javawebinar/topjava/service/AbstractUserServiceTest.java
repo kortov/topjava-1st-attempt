@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.*;
 import org.springframework.dao.*;
 import ru.javawebinar.topjava.model.*;
+import ru.javawebinar.topjava.repository.*;
 import ru.javawebinar.topjava.util.exception.*;
 
 import javax.validation.*;
@@ -20,9 +21,13 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     private CacheManager cacheManager;
 
+    @Autowired
+    protected JpaUtil jpaUtil;
+
     @Before
     public void setUp() throws Exception {
         cacheManager.getCache("users").clear();
+        jpaUtil.clear2ndLevelHibernateCache();
     }
 
     @Test
