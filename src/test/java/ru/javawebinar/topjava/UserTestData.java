@@ -1,12 +1,11 @@
 package ru.javawebinar.topjava;
 
-import ru.javawebinar.topjava.model.Role;
-import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.model.*;
 
-import java.util.Arrays;
+import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
+import static org.assertj.core.api.Assertions.*;
+import static ru.javawebinar.topjava.model.AbstractBaseEntity.*;
 
 public class UserTestData {
     public static final int USER_ID = START_SEQ;
@@ -16,7 +15,7 @@ public class UserTestData {
     public static final User ADMIN = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ROLE_ADMIN);
 
     public static void assertMatch(User actual, User expected) {
-        assertThat(actual).isEqualToIgnoringGivenFields(expected, "registered", "roles");
+        assertThat(actual).isEqualToIgnoringGivenFields(expected, "registered", "roles", "meals");
     }
 
     public static void assertMatch(Iterable<User> actual, User... expected) {
@@ -24,6 +23,6 @@ public class UserTestData {
     }
 
     public static void assertMatch(Iterable<User> actual, Iterable<User> expected) {
-        assertThat(actual).usingElementComparatorIgnoringFields("registered", "roles").isEqualTo(expected);
+        assertThat(actual).usingElementComparatorIgnoringFields("registered", "roles", "meals").isEqualTo(expected);
     }
 }
