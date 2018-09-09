@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.*;
 import ru.javawebinar.topjava.model.*;
 import ru.javawebinar.topjava.util.exception.*;
 
+import javax.validation.*;
 import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 
+import static java.time.LocalDateTime.*;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.MealTestData.assertMatch;
 import static ru.javawebinar.topjava.UserTestData.*;
@@ -123,5 +125,13 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
         List<Meal> meals = service.getBetweenDateTimes(LocalDateTime.of(2015, Month.JUNE, 2, 21, 0),
                 LocalDateTime.of(2015, Month.JUNE, 3, 21, 0), ADMIN_ID);
         assertMatch(meals, Collections.emptyList());
+    }
+
+    @Test
+    public void testValidation() throws Exception {
+        validateRootCause(() -> service.create(new Meal(null, of(2015, Month.JUNE, 1, 18, 0), "  ", 300), USER_ID), ConstraintViolationException.class);
+        validateRootCause(() -> service.create(new Meal(null, null, "Description", 300), USER_ID), ConstraintViolationException.class);
+        validateRootCause(() -> service.create(new Meal(null, of(2015, Month.JUNE, 1, 18, 0), "Description", 9), USER_ID), ConstraintViolationException.class);
+        validateRootCause(() -> service.create(new Meal(null, of(2015, Month.JUNE, 1, 18, 0), "Description", 5001), USER_ID), ConstraintViolationException.class);
     }
 }

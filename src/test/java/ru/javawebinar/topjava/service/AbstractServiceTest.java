@@ -9,6 +9,9 @@ import org.springframework.test.context.jdbc.*;
 import org.springframework.test.context.junit4.*;
 import ru.javawebinar.topjava.*;
 
+import static org.hamcrest.CoreMatchers.*;
+import static ru.javawebinar.topjava.util.ValidationUtil.*;
+
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
         "classpath:spring/spring-db.xml"
@@ -29,5 +32,15 @@ abstract public class AbstractServiceTest {
     static {
         // needed only for java.util.logging (postgres driver)
         SLF4JBridgeHandler.install();
+    }
+
+    //  Check root cause in JUnit: https://github.com/junit-team/junit4/pull/778
+    public <T extends Throwable> void validateRootCause(Runnable runnable, Class<T> exceptionClass) {
+        try {
+            runnable.run();
+            Assert.fail("Expected " + exceptionClass.getName());
+        } catch (Exception e) {
+            Assert.assertThat(getRootCause(e), instanceOf(exceptionClass));
+        }
     }
 }
