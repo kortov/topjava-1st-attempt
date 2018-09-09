@@ -4,6 +4,8 @@ import org.junit.*;
 import org.junit.rules.*;
 import org.junit.runner.*;
 import org.slf4j.bridge.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.core.env.*;
 import org.springframework.test.context.*;
 import org.springframework.test.context.jdbc.*;
 import org.springframework.test.context.junit4.*;
@@ -26,12 +28,20 @@ abstract public class AbstractServiceTest {
     @Rule
     public Stopwatch stopwatch = TimingRules.STOPWATCH;
 
+    @Autowired
+    public Environment env;
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     static {
         // needed only for java.util.logging (postgres driver)
         SLF4JBridgeHandler.install();
+    }
+
+    public boolean isJpaBased() {
+//        return Arrays.stream(env.getActiveProfiles()).noneMatch(Profiles.JDBC::equals);
+        return env.acceptsProfiles(Profiles.JPA, Profiles.DATAJPA);
     }
 
     //  Check root cause in JUnit: https://github.com/junit-team/junit4/pull/778

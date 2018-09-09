@@ -1,22 +1,17 @@
 package ru.javawebinar.topjava.web;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.javawebinar.topjava.UserTestData;
-import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.repository.mock.InMemoryUserRepositoryImpl;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
-import ru.javawebinar.topjava.web.user.AdminRestController;
+import org.junit.*;
+import org.springframework.context.*;
+import org.springframework.context.support.*;
+import ru.javawebinar.topjava.*;
+import ru.javawebinar.topjava.model.*;
+import ru.javawebinar.topjava.repository.mock.*;
+import ru.javawebinar.topjava.util.exception.*;
+import ru.javawebinar.topjava.web.user.*;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 
-import static ru.javawebinar.topjava.UserTestData.ADMIN;
+import static ru.javawebinar.topjava.UserTestData.*;
 
 public class InMemoryAdminRestControllerTest {
     private static ConfigurableApplicationContext appCtx;
@@ -31,7 +26,9 @@ public class InMemoryAdminRestControllerTest {
 
     @AfterClass
     public static void afterClass() {
-        appCtx.close();
+//        May cause during JUnit "Cache is not alive (STATUS_SHUTDOWN)" as JUnit share Spring context for speed
+//        http://stackoverflow.com/questions/16281802/ehcache-shutdown-causing-an-exception-while-running-test-suite
+//        appCtx.close();
     }
 
     @Before
