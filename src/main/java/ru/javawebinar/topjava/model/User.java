@@ -135,6 +135,10 @@ public class User extends AbstractNamedEntity {
         return password;
     }
 
+    public List<Meal> getMeals() {
+        return meals;
+    }
+
     public void setRoles(Collection<Role> roles) {
         this.roles = CollectionUtils.isEmpty(roles) ? Collections.emptySet() : EnumSet.copyOf(roles);
     }
