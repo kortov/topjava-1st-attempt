@@ -12,7 +12,6 @@ import java.util.*;
 public interface CrudUserRepository extends JpaRepository<User, Integer> {
     @Transactional
     @Modifying
-//    @Query(name = User.DELETE)
     @Query("DELETE FROM User u WHERE u.id=:id")
     int delete(@Param("id") int id);
 
@@ -28,6 +27,10 @@ public interface CrudUserRepository extends JpaRepository<User, Integer> {
 
     User getByEmail(String email);
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.meals WHERE u.id = ?1")
+//    @Query("SELECT u FROM User u LEFT JOIN FETCH u.meals WHERE u.id = ?1")
+//    @EntityGraph(value = User.GRAPH_WITH_MEALS)
+
+    @EntityGraph(attributePaths = {"meals", "roles"})
+    @Query("SELECT u FROM User u WHERE u.id=?1")
     User getWithMeals(int id);
 }
