@@ -23,7 +23,7 @@
         <slf4j.version>1.7.25</slf4j.version>
 
         <!--DB-->
-        <postgresql.version>42.2.2</postgresql.version>
+        <postgresql.version>42.4.1</postgresql.version>
         <!--    Tests  -->
         <junit.version>4.12</junit.version>
 
